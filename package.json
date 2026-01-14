@@ -1,0 +1,19 @@
+{
+  "name": "vortex",
+  "version": "1.0.0",
+  "description": "[![Tachyon-Tex](https://img.shields.io/badge/Engine-Tectonic-blueviolet?style=for-the-badge)](https://latex.taptapp.xyz) [![Latencia](https://img.shields.io/badge/Latency-%3C1s-green?style=for-the-badge)](https://latex.taptapp.xyz)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bin": {
+    "vortex": "index.js"
+  },
+  "directories": {
+    "example": "example"
+  }
+}
