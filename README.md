@@ -1,11 +1,11 @@
-# 🌀 Vortex CLI
+# 🌀 qtex CLI
 
 <p align="center">
   <img src="docs/assets/banner.png" alt="Vortex Banner" width="600px">
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/vortex"><img src="https://img.shields.io/npm/v/vortex?style=for-the-badge&logo=npm" alt="NPM Version"></a>
+  <a href="https://www.npmjs.com/package/qtex"><img src="https://img.shields.io/npm/v/qtex?style=for-the-badge&logo=npm" alt="NPM Version"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Fair_Source-blue.svg?style=for-the-badge" alt="License: Fair Source"></a>
   <a href="https://latex.taptapp.xyz"><img src="https://img.shields.io/badge/Engine-Tectonic-blueviolet?style=for-the-badge&logo=rust" alt="Tachyon-Tex Engine"></a>
   <a href="https://latex.taptapp.xyz"><img src="https://img.shields.io/badge/Latency-%3C1s-green?style=for-the-badge" alt="Real-time Latency"></a>
@@ -13,7 +13,7 @@
 
 ---
 
-**Vortex CLI** is an ultra-fast, cloud-powered LaTeX compiler designed for developers who value speed and simplicity. Say goodbye to heavy local TeX distributions like TeXLive or MikTeX. Compile your documents in the cloud with sub-second latency and real-time feedback.
+**qtex CLI** is an ultra-fast, cloud-powered LaTeX compiler designed for developers who value speed and simplicity. Say goodbye to heavy local TeX distributions like TeXLive or MikTeX. Compile your documents in the cloud with sub-second latency and real-time feedback.
 
 ---
 
@@ -30,10 +30,10 @@
 ## 🧠 How it Works
 
 <p align="center">
-  <img src="docs/assets/flow.png" alt="Vortex Workflow" width="700px">
+  <img src="docs/assets/flow.png" alt="qtex Workflow" width="700px">
 </p>
 
-1.  **Local Scan**: Vortex recursively discovers all required assets (TeX, styles, images) in your project.
+1.  **Local Scan**: qtex recursively discovers all required assets (TeX, styles, images) in your project.
 2.  **Pre-flight Audit**: Sends a lightweight version to the `/validate` endpoint for immediate syntax feedback.
 3.  **Cloud Compilation**: Ships project files via high-speed multipart streams to the **Tachyon-Tex** cloud infrastructure.
 4.  **Instant Sync**: Downloads and saves the resulting PDF locally, reflecting changes almost instantly.
@@ -45,14 +45,14 @@
 Install the CLI globally via NPM:
 
 ```bash
-npm install -g @srsergio/vortex
+npm install -g qtex
 ```
 
 *(Alternatively, you can clone and link it manually)*
 
 ```bash
-git clone https://github.com/srsergiolazaro/vortex.git
-cd vortex
+git clone https://github.com/srsergiolazaro/qtex.git
+cd qtex
 npm install
 npm link
 ```
@@ -65,28 +65,28 @@ npm link
 Compile the folder containing your root LaTeX file:
 
 ```bash
-vortex ./my-project
+qtex ./my-project
 ```
 
 ### Custom Output
 Define a specific filename for your generated PDF:
 
 ```bash
-vortex ./my-project --output thesis_final.pdf
+qtex ./my-project --output thesis_final.pdf
 ```
 
 ### Development (Live Recompilation)
 The `--watch` flag monitors your directory and recompiles instantly on any save:
 
 ```bash
-vortex ./my-project --watch
+qtex ./my-project --watch
 ```
 
 ---
 
 ## 📡 Infrastructure & API
 
-Vortex serves as the official CLI client for the **Tachyon-Tex** infrastructure:
+qtex serves as the official CLI client for the **Tachyon-Tex** infrastructure:
 
 *   **Endpoint**: `https://latex.taptapp.xyz`
 *   **Engine**: Tectonic (Rust / XeTeX)

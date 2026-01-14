@@ -21,11 +21,11 @@ async function main() {
 
         if (values.help || positionals.length === 0) {
             console.log(`
-${colors.magenta}${colors.bold}🌀 Vortex CLI${colors.reset}
+${colors.magenta}${colors.bold}🌀 qtex CLI${colors.reset}
 Ultra-fast LaTeX compilation powered by Tachyon-Tex
 
 ${colors.bold}USAGE:${colors.reset}
-  vortex <directory> [options]
+  qtex <directory> [options]
 
 ${colors.bold}OPTIONS:${colors.reset}
   -w, --watch           Watch for changes and recompile
@@ -36,7 +36,7 @@ ${colors.bold}OPTIONS:${colors.reset}
         }
 
         const directory = positionals[0];
-        console.log(`${colors.magenta}${colors.bold}\n🌀 Vortex CLI v1.0.0 (Vanilla)${colors.reset}\n`);
+        console.log(`${colors.magenta}${colors.bold}\n🌀 qtex CLI v1.0.0 (Vanilla)${colors.reset}\n`);
 
         if (values.watch) {
             ui.info(`Watching for changes in: ${colors.bold}${directory}${colors.reset}`);

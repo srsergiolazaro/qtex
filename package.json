@@ -1,5 +1,5 @@
 {
-  "name": "vortex",
+  "name": "qtex",
   "version": "1.0.0",
   "description": "Vortex CLI: Ultra-fast cloud-based LaTeX compilation. Compile LaTeX documents in milliseconds using a high-performance Rust-powered engine without local TeX installation.",
   "main": "index.js",
@@ -21,17 +21,23 @@
   "author": "Sergio Lázaro (srsergio)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/srsergiolazaro/vortex.git"
+    "url": "git+https://github.com/srsergiolazaro/qtex.git"
   },
   "bugs": {
-    "url": "https://github.com/srsergiolazaro/vortex/issues"
+    "url": "https://github.com/srsergiolazaro/qtex/issues"
   },
-  "homepage": "https://github.com/srsergiolazaro/vortex#readme",
+  "homepage": "https://github.com/srsergiolazaro/qtex#readme",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "bin": {
-    "vortex": "./index.js"
+    "qtex": "index.js"
   },
+  "files": [
+    "index.js",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
   "directories": {
     "example": "example"
   }
