@@ -9,6 +9,7 @@ export const colors = {
     green: `${ESC}32m`,
     yellow: `${ESC}33m`,
     red: `${ESC}31m`,
+    underline: `${ESC}4m`,
 };
 
 export const ui = {

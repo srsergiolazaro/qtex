@@ -5,6 +5,8 @@ import { resolve, basename, extname } from 'node:path';
 import { parseArgs } from 'node:util';
 import { colors, ui } from './src/ui.js';
 import { compile } from './src/compiler.js';
+import { startServer } from './src/server.js';
+import { exec } from 'node:child_process';
 
 // --- Entry Point ---
 const args = process.argv.slice(2);
@@ -39,8 +41,16 @@ ${colors.bold}OPTIONS:${colors.reset}
         console.log(`${colors.magenta}${colors.bold}\n🌀 qtex CLI v1.0.0 (Vanilla)${colors.reset}\n`);
 
         if (values.watch) {
+            startServer();
+            const viewUrl = 'http://localhost:4848/view';
             ui.info(`Watching for changes in: ${colors.bold}${directory}${colors.reset}`);
+            ui.info(`View PDF at: ${colors.blue}${colors.underline}${viewUrl}${colors.reset}`);
+
             await compile(directory, values);
+
+            // Auto-open browser
+            const openCmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+            exec(`${openCmd} ${viewUrl}`);
 
             let isCompiling = false;
             watch(directory, { recursive: true }, async (event, filename) => {
