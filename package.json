@@ -1,7 +1,7 @@
 {
   "name": "qtex",
-  "version": "1.1.2",
-  "description": "Vortex CLI: Ultra-fast cloud-based LaTeX compilation. Compile LaTeX documents in milliseconds using a high-performance Rust-powered engine without local TeX installation.",
+  "version": "1.1.3",
+  "description": "Ultra-fast cloud LaTeX compiler. Compile .tex documents in milliseconds without installing TeXLive or MikTeX. Zero config, sub-second builds, live watch mode.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,13 +12,21 @@
     "latex",
     "tex",
     "compiler",
-    "tectonic",
-    "rust",
+    "pdf",
+    "latex-compiler",
     "cloud-latex",
-    "pdf-generator",
-    "vortex",
+    "tectonic",
+    "xelatex",
+    "pdflatex",
+    "academic",
+    "thesis",
+    "paper",
+    "document",
+    "typesetting",
+    "markdown-to-pdf",
     "cli",
-    "typesetting"
+    "fast",
+    "rust"
   ],
   "author": "Sergio Lázaro (srsergio)",
   "repository": {
@@ -28,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/srsergiolazaro/qtex/issues"
   },
-  "homepage": "https://github.com/srsergiolazaro/qtex#readme",
+  "homepage": "https://srsergiolazaro.github.io/qtex/",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "bin": {
@@ -42,5 +50,8 @@
   ],
   "directories": {
     "example": "example"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
