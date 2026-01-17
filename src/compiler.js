@@ -35,6 +35,7 @@ export async function compile(dir, options) {
         const form = new FormData();
         const validateForm = new FormData();
         let hasLatex = false;
+        let sentFilesCount = 0;
 
         for (const fileObj of allFiles) {
             const ext = extname(fileObj.path).toLowerCase();
@@ -47,6 +48,7 @@ export async function compile(dir, options) {
                 const content = await readFile(fileObj.path);
                 const blob = new Blob([content]);
                 form.append('files', blob, fileObj.relative);
+                sentFilesCount++;
 
                 if (ext === '.tex') {
                     validateForm.append('files', blob, fileObj.relative);
@@ -99,7 +101,7 @@ export async function compile(dir, options) {
         if (response.ok) {
             const buffer = await response.arrayBuffer();
             const compileTime = response.headers.get('x-compile-time-ms') || 'unknown';
-            const filesReceived = response.headers.get('x-files-received') || '0';
+            const filesReceived = response.headers.get('x-files-received') || sentFilesCount;
 
             const outputPath = resolve(process.cwd(), outputFileName);
             await writeFile(outputPath, Buffer.from(buffer));

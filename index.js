@@ -97,7 +97,7 @@ ${colors.bold}OPTIONS:${colors.reset}
 
             // Auto-open generated PDF in the system browser
             const outputFileName = values.output || 'output.pdf';
-            const outputPath = resolve(process.cwd(), directory, outputFileName);
+            const outputPath = resolve(process.cwd(), outputFileName);
             const openCmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start ""' : 'xdg-open';
             exec(`${openCmd} "${outputPath}"`);
         }
