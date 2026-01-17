@@ -26,7 +26,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Automated Version Bump
         id: version-bump
@@ -34,6 +34,9 @@ jobs:
           # Config git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Ensure lockfile changes from ci/install are discarded to avoid "directory not clean" error
+          git checkout package-lock.json
           
           # Bump version (patch)
           npm version patch -m "chore: bump version to %s [skip ci]"
