@@ -58,14 +58,16 @@ npm install -g qtex
 ### Option 3: Standalone Installation (Recommended)
 Install the binary directly without Node.js or npm. Copy and paste into your terminal:
 
-**macOS / Linux:**
+#### macOS / Linux
+Run this command to install:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/bun-bundle/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.sh | bash
 ```
 
-**Windows (PowerShell):**
+#### Windows (PowerShell)
+Run this command to install:
 ```powershell
-irm https://raw.githubusercontent.com/srsergiolazaro/qtex/bun-bundle/install.ps1 | iex
+irm https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.ps1 | iex
 ```
 
 Once installed, you can simply run:
