@@ -24,6 +24,11 @@ async function main() {
     try {
         const { values, positionals } = parseArgs({ args, options: optionsSchema, allowPositionals: true });
 
+        if (values.update) {
+            await selfUpdate();
+            process.exit(0);
+        }
+
         if (values.help || positionals.length === 0) {
             console.log(`
 ${colors.magenta}${colors.bold}🌀 qtex CLI${colors.reset}
@@ -35,15 +40,13 @@ ${colors.bold}USAGE:${colors.reset}
 ${colors.bold}OPTIONS:${colors.reset}
   -w, --watch           Watch for changes and recompile
   -o, --output <file>   Define output filename (default: output.pdf)
+  -u, --update          Update to the latest version
   -h, --help            Show this help message
             `);
             process.exit(0);
         }
 
-        if (values.update) {
-            await selfUpdate();
-            process.exit(0);
-        }
+
 
         const directory = positionals[0];
         console.log(`${colors.magenta}${colors.bold}\n🌀 qtex CLI v${packageJson.version} (Vanilla)${colors.reset}\n`);
