@@ -50,10 +50,17 @@ export async function autoUpdate(currentVersion) {
         if (latestVersion !== currentVersion) {
             console.log(`${colors.dim}\n🚀 New version detected (${data.tag_name}). Updating silently in background...${colors.reset}`);
 
-            // Re-run installer silently in a detached background process
-            const installScript = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
+            // Platform-aware install command
+            let installCmd, shell;
+            if (process.platform === 'win32') {
+                installCmd = 'irm https://raw.githubusercontent.com/' + REPO + '/main/install.ps1 | iex';
+                shell = 'powershell';
+            } else {
+                installCmd = 'curl -fsSL https://raw.githubusercontent.com/' + REPO + '/main/install.sh | bash';
+                shell = 'bash';
+            }
 
-            spawn('bash', ['-c', `${installScript} > /dev/null 2>&1`], {
+            spawn(shell, ['-c', installCmd], {
                 detached: true,
                 stdio: 'ignore'
             }).unref();
@@ -78,8 +85,15 @@ export async function selfUpdate(currentVersion) {
         }
 
         ui.info(`New version found: ${colors.bold}v${latestVersion}${colors.reset}. Updating...`);
-        const installScriptCmd = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
-        execSync(installScriptCmd, { stdio: 'inherit' });
+
+        if (process.platform === 'win32') {
+            const installCmd = `powershell -Command "irm https://raw.githubusercontent.com/${REPO}/main/install.ps1 | iex"`;
+            execSync(installCmd, { stdio: 'inherit' });
+        } else {
+            const installScriptCmd = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
+            execSync(installScriptCmd, { stdio: 'inherit' });
+        }
+
         ui.success('qtex has been updated successfully!');
     } catch (error) {
         ui.error(`Update failed: ${error.message}`);
