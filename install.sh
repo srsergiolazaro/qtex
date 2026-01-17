@@ -83,8 +83,8 @@ if [ -n "$SHELL_CONFIG" ]; then
         echo -e "${BLUE}⚙️  Adding $BIN_DIR to PATH in $SHELL_CONFIG...${RESET}"
         echo "" >> "$SHELL_CONFIG"
         echo "# qtex binary" >> "$SHELL_CONFIG"
-        echo "export PATH=\"\$PATH:$BIN_DIR\"" >> "$SHELL_CONFIG"
-        export PATH="$PATH:$BIN_DIR"
+        echo "export PATH=\"$BIN_DIR:\$PATH\"" >> "$SHELL_CONFIG"
+        export PATH="$BIN_DIR:$PATH"
     else
         echo -e "✅ $BIN_DIR is already in your PATH."
     fi
