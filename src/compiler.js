@@ -1,7 +1,7 @@
 import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { resolve, join, extname, basename } from 'node:path';
 import { colors, ui, Spinner } from './ui.js';
-import { notifyExtension } from './server.js';
+import { notifyClients } from './server.js';
 
 const API_BASE = 'https://latex.taptapp.xyz';
 
@@ -105,7 +105,7 @@ export async function compile(dir, options) {
             await writeFile(outputPath, Buffer.from(buffer));
 
             if (options.watch) {
-                notifyExtension(outputPath);
+                notifyClients(outputPath);
             }
 
             spinner.succeed(`${colors.green}PDF generated in ${colors.bold}${compileTime}ms${colors.reset}`);

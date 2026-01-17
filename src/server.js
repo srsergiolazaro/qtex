@@ -84,7 +84,7 @@ export function startServer(port = 4848) {
     }
 }
 
-export function notifyExtension(pdfPath) {
+export function notifyClients(pdfPath) {
     currentPdfPath = pdfPath;
     const message = JSON.stringify({ type: 'reload' });
     for (const client of clients) {
