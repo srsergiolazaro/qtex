@@ -8,9 +8,10 @@ $Repo = "srsergiolazaro/qtex"
 
 Write-Host "🌀 qtex Installer (Hybrid Architecture)" -ForegroundColor Magenta
 
-# 2. Creating directories
+# 2. Creating directories & Cleaning old binaries
 if (-not (Test-Path $RuntimeDir)) { New-Item -ItemType Directory -Path $RuntimeDir -Force | Out-Null }
 if (-not (Test-Path $BinDir)) { New-Item -ItemType Directory -Path $BinDir -Force | Out-Null }
+if (Test-Path "$BinDir\qtex.exe") { Remove-Item "$BinDir\qtex.exe" -Force -ErrorAction SilentlyContinue }
 
 # 3. Download/Install Bun Engine (The "Motor")
 $BunPath = Join-Path $RuntimeDir "bun.exe"
