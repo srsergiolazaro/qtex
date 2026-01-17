@@ -6,7 +6,7 @@ import { parseArgs } from 'node:util';
 import { colors, ui } from './src/ui.js';
 import { compile } from './src/compiler.js';
 import { startServer } from './src/server.js';
-import { checkForUpdates, selfUpdate } from './src/updater.js';
+import { autoUpdate, selfUpdate } from './src/updater.js';
 import { exec } from 'node:child_process';
 import packageJson from './package.json' assert { type: 'json' };
 
@@ -52,7 +52,7 @@ ${colors.bold}OPTIONS:${colors.reset}
         console.log(`${colors.magenta}${colors.bold}\n🌀 qtex CLI v${packageJson.version} (Vanilla)${colors.reset}\n`);
 
         // Check for updates in the background
-        checkForUpdates(packageJson.version);
+        autoUpdate(packageJson.version);
 
         if (values.watch) {
             startServer();

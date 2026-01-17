@@ -1,62 +1,74 @@
-import { execSync } from 'node:child_process';
+import { execSync, spawn } from 'node:child_process';
 import { colors, ui } from './ui.js';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
 const REPO = 'srsergiolazaro/qtex';
-const INSTALL_DIR = join(homedir(), '.qtex', 'bin');
+const STATE_DIR = join(homedir(), '.qtex');
+const INSTALL_DIR = join(STATE_DIR, 'bin');
+const STATE_FILE = join(STATE_DIR, 'state.json');
 const BINARY_NAME = process.platform === 'win32' ? 'qtex.exe' : 'qtex';
 
-export async function checkForUpdates(currentVersion) {
+async function getState() {
+    try {
+        const content = await readFile(STATE_FILE, 'utf-8');
+        return JSON.parse(content);
+    } catch {
+        return { lastCheck: 0 };
+    }
+}
+
+async function saveState(state) {
+    try {
+        await mkdir(STATE_DIR, { recursive: true });
+        await writeFile(STATE_FILE, JSON.stringify(state));
+    } catch { }
+}
+
+/**
+ * Checks for updates in the background and launches a detached 
+ * background process to update the binary if a new version is found.
+ */
+export async function autoUpdate(currentVersion) {
+    const state = await getState();
+    const now = Date.now();
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+
+    // Only check once a day to maintain performance
+    if (now - state.lastCheck < ONE_DAY) return;
+
     try {
         const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
         if (!res.ok) return;
 
         const data = await res.json();
-        const latestTag = data.tag_name; // e.g., v1.0.6
-        const latestVersion = latestTag.replace('v', '');
+        const latestVersion = data.tag_name.replace('v', '');
+
+        await saveState({ ...state, lastCheck: now });
 
         if (latestVersion !== currentVersion) {
-            console.log(`\n${colors.yellow}✨ A new version of qtex is available: ${colors.bold}${latestTag}${colors.reset}`);
-            console.log(`${colors.dim}Run ${colors.blue}qtex --update${colors.reset}${colors.dim} to update automatically.\n${colors.reset}`);
+            console.log(`${colors.dim}\n🚀 New version detected (${data.tag_name}). Updating silently in background...${colors.reset}`);
+
+            // Re-run installer silently in a detached background process
+            const installScript = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
+
+            spawn('bash', ['-c', `${installScript} > /dev/null 2>&1`], {
+                detached: true,
+                stdio: 'ignore'
+            }).unref();
         }
     } catch (e) {
-        // Silently ignore update check failures
+        // Silently fail if network or other errors occur during background check
     }
 }
 
 export async function selfUpdate() {
-    ui.info('Checking for the latest version...');
-
+    ui.info('Updating qtex to the latest version...');
     try {
-        const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
-        const data = await res.json();
-        const latestTag = data.tag_name;
-
-        // Detect asset name based on OS/Arch
-        const os = process.platform === 'darwin' ? 'darwin' : process.platform === 'win32' ? 'windows' : 'linux';
-        // Simple arch detection for Bun targets
-        const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-
-        let assetName = `qtex-${os}-${arch}`;
-        if (os === 'windows') assetName += '.exe';
-
-        const asset = data.assets.find(a => a.name === assetName);
-        if (!asset) {
-            ui.error(`Could not find a binary for your platform (${assetName}).`);
-            return;
-        }
-
-        ui.info(`Downloading ${colors.bold}${latestTag}${colors.reset}...`);
-
-        const binPath = join(INSTALL_DIR, BINARY_NAME);
         const installScriptCmd = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
-
-        // The easiest way to update safely is to re-run the install script
-        // because it handles PATH and binary replacement correctly.
         execSync(installScriptCmd, { stdio: 'inherit' });
-
-        ui.success('qtex has been updated to the latest version!');
+        ui.success('qtex has been updated successfully!');
     } catch (error) {
         ui.error(`Update failed: ${error.message}`);
     }
