@@ -2,8 +2,8 @@ import './style.css'
 
 // OS Detection & Command Switching
 const commands = {
-  unix: 'curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.sh | bash',
-  windows: 'irm https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.ps1 | iex'
+  unix: 'curl -fsSL https://srsergiolazaro.github.io/qtex/install.sh | bash',
+  windows: 'irm https://srsergiolazaro.github.io/qtex/install.ps1 | iex'
 }
 
 const tabs = document.querySelectorAll('.os-tab')

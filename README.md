@@ -29,12 +29,12 @@
 
 **macOS / Linux**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.sh | bash
+curl -fsSL https://srsergiolazaro.github.io/qtex/install.sh | bash
 ```
 
 **Windows (PowerShell)**
 ```powershell
-irm https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.ps1 | iex
+irm https://srsergiolazaro.github.io/qtex/install.ps1 | iex
 ```
 
 **Or use directly with npx (zero install):**
