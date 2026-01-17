@@ -29,6 +29,9 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Sync install scripts
+        run: cp install.sh install.ps1 docs/site/public/
+
       - name: Install dependencies
         working-directory: docs/site
         run: bun install
