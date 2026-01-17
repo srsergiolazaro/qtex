@@ -1,10 +1,5 @@
 import './style.css'
-
-// OS Detection & Command Switching
-const commands = {
-  unix: 'curl -fsSL https://qtex.sh/install.sh | bash',
-  windows: 'irm https://qtex.sh/install.ps1 | iex'
-}
+import { CONFIG } from './config'
 
 const tabs = document.querySelectorAll('.os-tab')
 const commandEl = document.getElementById('install-command')
@@ -21,7 +16,7 @@ function getOS() {
 function switchOS(os) {
   tabs.forEach(t => t.classList.toggle('active', t.dataset.os === os))
   if (commandEl) {
-    commandEl.textContent = commands[os] || commands.unix
+    commandEl.textContent = CONFIG.commands[os] || CONFIG.commands.unix
     // Add a small flash effect when switching
     commandEl.style.color = 'white'
     setTimeout(() => {
@@ -30,8 +25,26 @@ function switchOS(os) {
   }
 }
 
-// Init with detected OS
-switchOS(getOS())
+// Init
+function init() {
+  // Update static elements from config
+  const statusEl = document.querySelector('.status-indicator')
+  if (statusEl) {
+    const pulse = statusEl.querySelector('.pulse')
+    statusEl.innerHTML = ''
+    if (pulse) statusEl.appendChild(pulse)
+    statusEl.appendChild(document.createTextNode(CONFIG.status))
+  }
+
+  const hero = document.querySelector('.hero')
+  if (hero) {
+    hero.style.setProperty('--version-content', `"${CONFIG.version}"`)
+  }
+
+  switchOS(getOS())
+}
+
+init()
 
 // Tab clicks
 tabs.forEach(tab => {

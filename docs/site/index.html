@@ -35,13 +35,35 @@
           <div class="dot" style="background: var(--secondary)"></div>
         </div>
         <div class="terminal-body">
-          <code id="install-command">curl -fsSL https://qtex.sh/install.sh | bash</code>
+          <code id="install-command">curl -fsSL https://srsergiolazaro.github.io/qtex/install.sh | bash</code>
           <button class="copy-button" id="copy-btn">COPY</button>
         </div>
       </div>
       <p class="mono" style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
         $ npx qtex ./project <span style="color: var(--primary)"># or just use npm</span>
       </p>
+    </section>
+
+    <!-- Usage -->
+    <section class="usage-area fade-up" data-delay="3">
+      <h2 style="margin-bottom: 2rem;">How to Use</h2>
+      <div class="usage-grid">
+        <div class="usage-item">
+          <h4>Compile</h4>
+          <p>The standard way to generate your PDF from a LaTeX folder.</p>
+          <div class="usage-cmd">$ qtex ./my-project</div>
+        </div>
+        <div class="usage-item">
+          <h4>Watch Mode</h4>
+          <p>Auto-recompile whenever you save any file in your project.</p>
+          <div class="usage-cmd">$ qtex ./my-project --watch</div>
+        </div>
+        <div class="usage-item">
+          <h4>Custom Output</h4>
+          <p>Define a specific filename for your generated PDF document.</p>
+          <div class="usage-cmd">$ qtex ./my-project -o final.pdf</div>
+        </div>
+      </div>
     </section>
 
     <!-- Features -->
