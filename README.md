@@ -1,129 +1,104 @@
-# 🌀 qtex CLI
+# ⚡ qtex
 
 <p align="center">
-  <img src="docs/assets/banner.png" alt="Vortex Banner" width="600px">
+  <img src="https://raw.githubusercontent.com/srsergiolazaro/qtex/main/docs/assets/banner.jpeg" alt="qtex Banner" width="500">
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/qtex"><img src="https://img.shields.io/npm/v/qtex?style=for-the-badge&logo=npm" alt="NPM Version"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Fair_Source-blue.svg?style=for-the-badge" alt="License: Fair Source"></a>
-  <a href="https://latex.taptapp.xyz"><img src="https://img.shields.io/badge/Engine-Tectonic-blueviolet?style=for-the-badge&logo=rust" alt="Tachyon-Tex Engine"></a>
-  <a href="https://latex.taptapp.xyz"><img src="https://img.shields.io/badge/Latency-%3C1s-green?style=for-the-badge" alt="Real-time Latency"></a>
+  <a href="https://www.npmjs.com/package/qtex"><img src="https://img.shields.io/npm/v/qtex?style=flat-square&logo=npm&color=cb3837" alt="NPM Version"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Fair_Source-blue.svg?style=flat-square" alt="License"></a>
+  <a href="https://latex.taptapp.xyz"><img src="https://img.shields.io/badge/Engine-Tectonic-8b5cf6?style=flat-square&logo=rust" alt="Engine"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Latency-<1s-22c55e?style=flat-square" alt="Latency"></a>
+</p>
+
+<p align="center">
+  <strong>Cloud LaTeX compiler. Sub-second builds. Zero setup.</strong>
 </p>
 
 ---
 
-**qtex CLI** is an ultra-fast, cloud-powered LaTeX compiler designed for developers who value speed and simplicity. Say goodbye to heavy local TeX distributions like TeXLive or MikTeX. Compile your documents in the cloud with sub-second latency and real-time feedback.
+## Install
 
----
-
-## 🚀 Key Features
-
-*   **⚡ Lightning Fast**: Powered by the Rust-based Tectonic engine, optimized for "moonshot" speed.
-*   **📦 Zero-Config**: No local dependencies required. Just run and compile.
-*   **👀 Smart Watch Mode**: Automatically detects changes in `.tex`, `.bib`, `.sty`, and even **images** (`.png`, `.jpg`, `.jpeg`) to recompile in milliseconds.
-*   **🔍 Intelligent Validation**: Pre-flight checks on the API to catch syntax errors before the full compilation process.
-*   **📂 Recursive Project Support**: Handles complex multi-file projects, including nested asset folders.
-
----
-
-## 🧠 How it Works
-
-<p align="center">
-  <img src="docs/assets/flow.png" alt="qtex Workflow" width="700px">
-</p>
-
-1.  **Local Scan**: qtex recursively discovers all required assets (TeX, styles, images) in your project.
-2.  **Pre-flight Audit**: Sends a lightweight version to the `/validate` endpoint for immediate syntax feedback.
-3.  **Cloud Compilation**: Ships project files via high-speed multipart streams to the **Tachyon-Tex** cloud infrastructure.
-4.  **Instant Sync**: Downloads and saves the resulting PDF locally, reflecting changes almost instantly.
-
-## 🚀 Quick Start
-
-You can use **qtex** immediately without installation via `npx`, or install it globally for frequent use.
-
-### Option 1: Use with npx (Zero Installation)
-The easiest way to get started. No need to install anything:
-
-```bash
-npx qtex ./my-project
-```
-
-### Option 2: Global Installation via npm
-For the best experience if you have Node.js:
-```bash
-npm install -g qtex
-```
-
-### Option 3: Standalone Installation (Recommended)
-Install the binary directly without Node.js or npm. Copy and paste into your terminal:
-
-#### macOS / Linux
-Run this command to install:
+**macOS / Linux**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.sh | bash
 ```
 
-#### Windows (PowerShell)
-Run this command to install:
+**Windows (PowerShell)**
 ```powershell
 irm https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.ps1 | iex
 ```
 
-Once installed, you can simply run:
+**Or use directly without installing:**
 ```bash
-qtex ./my-project
+npx qtex ./my-project
 ```
 
 ---
 
-## 🛠️ Commands & Options
+## Features
 
-### Watch Mode (Live Recompilation)
-The `--watch` flag monitors your directory and recompiles instantly on any save:
+| Feature | Description |
+|---------|-------------|
+| ⚡ **Fast** | Rust-based Tectonic engine. Compile in milliseconds. |
+| 📦 **Zero Config** | No TeXLive, no MikTeX. No 5GB downloads. |
+| 👀 **Watch Mode** | Auto-recompile on save. Supports `.tex`, `.bib`, `.sty`, images. |
+| 🔍 **Validation** | Pre-flight syntax checks before compilation. |
+| 📂 **Multi-file** | Recursive asset discovery with nested folders. |
+| 🔒 **Private** | Stateless & ephemeral. Files never stored. |
+
+---
+
+## Usage
 
 ```bash
-# Using npx
-npx qtex ./my-project --watch
+# Compile a project
+qtex ./my-project
 
-# Using global install
+# Watch mode (live recompilation)
 qtex ./my-project --watch
-```
 
-### Custom Output
-Define a specific filename for your generated PDF:
+# Custom output filename
+qtex ./my-project --output thesis.pdf
 
-```bash
-qtex ./my-project --output thesis_final.pdf
-```
-
-### Help
-See all available options:
-
-```bash
+# Help
 qtex --help
 ```
 
 ---
 
-## 📡 Infrastructure & API
+## How it Works
 
-qtex serves as the official CLI client for the **Tachyon-Tex** infrastructure:
+<p align="center">
+  <img src="https://raw.githubusercontent.com/srsergiolazaro/qtex/main/docs/assets/flow.png" alt="qtex Workflow" width="600">
+</p>
 
-*   **Endpoint**: `https://latex.taptapp.xyz`
-*   **Engine**: Tectonic (Rust / XeTeX)
-*   **Privacy**: Stateless and ephemeral. Project data is processed in-memory and never stored.
-
----
-
-## ⚖️ License
-
-This project is licensed under the **Fair Source License**.
-*   **Individual/Small Teams**: Free to use for individuals and organizations with up to 3 concurrent users.
-*   **Enterprise/Large Scale**: For use beyond 3 users, please contact us for a commercial license.
-
-For more details, see the [LICENSE](./LICENSE) file.
+1. **Scan** — Discover all TeX assets and dependencies
+2. **Validate** — Pre-flight syntax check
+3. **Compile** — Cloud processing via Tectonic
+4. **Sync** — Download PDF locally
 
 ---
 
-Built with ❤️ by the **Tachyon-Tex** team. Optimized for modern LaTeX workflows.
+## Infrastructure
+
+- **Endpoint**: `https://latex.taptapp.xyz`
+- **Engine**: Tectonic (Rust / XeTeX)
+- **Privacy**: Stateless processing. Data never stored.
+
+---
+
+## License
+
+**Fair Source License**
+
+- ✅ Free for individuals and teams up to 3 users
+- 📧 Contact for enterprise/commercial use
+
+See [LICENSE](./LICENSE) for details.
+
+---
+
+<p align="center">
+  Built with ❤️ by <strong>Tachyon-Tex</strong>
+</p>

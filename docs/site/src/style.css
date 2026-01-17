@@ -1,0 +1,553 @@
+/* ============================================
+   QTEX - BRUTALIST CON VIDA
+   Bold. Colorful. Fun.
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --black: #0a0a0a;
+  --white: #fafafa;
+  --purple: #a855f7;
+  --cyan: #06b6d4;
+  --yellow: #fbbf24;
+  --pink: #ec4899;
+  --lime: #84cc16;
+  --border: 3px solid var(--black);
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  background: var(--white);
+  color: var(--black);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* ============================================
+   HERO - Con color y movimiento
+   ============================================ */
+.hero {
+  padding: 4rem 0;
+  border-bottom: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '◉ ◉ ◉';
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.5rem;
+  color: var(--purple);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.logo {
+  font-size: clamp(5rem, 22vw, 14rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0.1em;
+  left: 0;
+  width: 100%;
+  height: 0.15em;
+  background: linear-gradient(90deg, var(--purple), var(--cyan), var(--pink));
+  transform: skewX(-12deg);
+}
+
+.tagline {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-weight: 400;
+}
+
+.tagline span {
+  background: var(--yellow);
+  padding: 0 0.3em;
+}
+
+/* ============================================
+   INSTALL - Terminal con estilo
+   ============================================ */
+.install {
+  padding: 2.5rem 0;
+  border-bottom: var(--border);
+}
+
+.install-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label::before {
+  content: '▶';
+  color: var(--lime);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.os-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.os-tab {
+  padding: 0.6rem 1.2rem;
+  background: var(--white);
+  border: var(--border);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.os-tab:not(:first-child) {
+  margin-left: -3px;
+}
+
+.os-tab:hover {
+  background: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.os-tab.active {
+  background: var(--purple);
+  color: var(--white);
+  z-index: 1;
+}
+
+.terminal {
+  display: flex;
+  align-items: stretch;
+  border: var(--border);
+  background: var(--black);
+  color: var(--lime);
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal::before {
+  content: '$';
+  padding: 1rem;
+  padding-right: 0;
+  color: var(--cyan);
+  font-weight: bold;
+}
+
+.terminal code {
+  flex: 1;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.copy-btn {
+  padding: 1rem 1.5rem;
+  background: var(--yellow);
+  color: var(--black);
+  border: none;
+  border-left: var(--border);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  background: var(--pink);
+  color: var(--white);
+  transform: scale(1.05);
+}
+
+.alt {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.alt code {
+  background: var(--black);
+  color: var(--cyan);
+  padding: 0.3rem 0.6rem;
+  font-family: inherit;
+}
+
+/* ============================================
+   FEATURES - Grid colorido
+   ============================================ */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  border-bottom: var(--border);
+}
+
+.feature {
+  padding: 2rem;
+  border: var(--border);
+  margin: -1.5px;
+  transition: all 0.2s ease;
+  position: relative;
+  background: var(--white);
+}
+
+.feature:nth-child(1) {
+  --accent: var(--purple);
+}
+
+.feature:nth-child(2) {
+  --accent: var(--cyan);
+}
+
+.feature:nth-child(3) {
+  --accent: var(--pink);
+}
+
+.feature:nth-child(4) {
+  --accent: var(--lime);
+}
+
+.feature:hover {
+  background: var(--accent);
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 var(--black);
+}
+
+.feature:hover h3,
+.feature:hover p {
+  color: var(--black);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.feature:hover .feature-icon {
+  transform: rotate(-10deg) scale(1.1);
+}
+
+.feature h3 {
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.feature p {
+  font-size: 0.875rem;
+  color: #444;
+  transition: color 0.2s ease;
+}
+
+/* ============================================
+   HOW IT WORKS - Pasos animados
+   ============================================ */
+.how {
+  padding: 2.5rem 0;
+  border-bottom: var(--border);
+}
+
+.how h2 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.how h2::after {
+  content: '';
+  flex: 1;
+  height: 3px;
+  background: repeating-linear-gradient(90deg,
+      var(--black) 0,
+      var(--black) 8px,
+      transparent 8px,
+      transparent 16px);
+}
+
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  padding: 0.75rem;
+  border: 2px dashed transparent;
+  transition: all 0.2s ease;
+}
+
+.steps li:hover {
+  border-color: var(--purple);
+  background: rgba(168, 85, 247, 0.1);
+}
+
+.steps li span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--black);
+  color: var(--white);
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.steps li:nth-child(1) span {
+  background: var(--purple);
+}
+
+.steps li:nth-child(2) span {
+  background: var(--cyan);
+  color: var(--black);
+}
+
+.steps li:nth-child(3) span {
+  background: var(--pink);
+}
+
+.steps li:nth-child(4) span {
+  background: var(--lime);
+  color: var(--black);
+}
+
+.steps li:hover span {
+  transform: rotate(-5deg) scale(1.1);
+}
+
+/* ============================================
+   CTA - Botones con punch
+   ============================================ */
+.cta {
+  padding: 2.5rem 0;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: var(--border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  border: var(--border);
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--purple);
+  z-index: -1;
+  transform: translate(6px, 6px);
+  transition: transform 0.15s ease;
+}
+
+.btn:hover {
+  transform: translate(3px, 3px);
+}
+
+.btn:hover::before {
+  transform: translate(3px, 3px);
+}
+
+.btn-alt {
+  background: var(--white);
+  color: var(--black);
+}
+
+.btn-alt::before {
+  background: var(--cyan);
+}
+
+/* ============================================
+   FOOTER - Minimal con toque
+   ============================================ */
+.footer {
+  padding: 2rem 0;
+  font-size: 0.875rem;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer strong {
+  color: var(--black);
+  background: linear-gradient(90deg, var(--purple), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.footer-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+.footer-dots span:nth-child(1) {
+  background: var(--purple);
+  animation-delay: 0s;
+}
+
+.footer-dots span:nth-child(2) {
+  background: var(--cyan);
+  animation-delay: 0.2s;
+}
+
+.footer-dots span:nth-child(3) {
+  background: var(--pink);
+  animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
+  main {
+    padding: 1rem;
+  }
+
+  .hero {
+    padding: 2rem 0;
+  }
+
+  .hero::before {
+    display: none;
+  }
+
+  .feature {
+    padding: 1.5rem;
+  }
+
+  .btn::before {
+    display: none;
+  }
+
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

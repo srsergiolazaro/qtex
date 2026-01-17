@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="QTEX - Ultra-fast cloud LaTeX compiler. Sub-second compilation. Zero dependencies." />
+  <title>QTEX — Cloud LaTeX</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+  <main>
+    <!-- Hero -->
+    <header class="hero">
+      <h1 class="logo">QTEX</h1>
+      <p class="tagline">Cloud LaTeX compiler.<br><span>Sub-second builds.</span> Zero setup.</p>
+    </header>
+
+    <!-- Install -->
+    <section class="install">
+      <div class="install-header">
+        <span class="label">INSTALL</span>
+        <div class="os-tabs">
+          <button class="os-tab active" data-os="unix">UNIX</button>
+          <button class="os-tab" data-os="windows">WIN</button>
+        </div>
+      </div>
+      <div class="terminal">
+        <code
+          id="install-command">curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.sh | bash</code>
+        <button class="copy-btn" id="copy-btn">COPY</button>
+      </div>
+      <p class="alt">or just: <code>npx qtex ./project</code></p>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="features">
+      <article class="feature">
+        <span class="feature-icon">⚡</span>
+        <h3>BLAZING FAST</h3>
+        <p>Rust-based Tectonic engine. Compile in milliseconds, not minutes.</p>
+      </article>
+      <article class="feature">
+        <span class="feature-icon">📦</span>
+        <h3>ZERO CONFIG</h3>
+        <p>No TeXLive. No MikTeX. No 5GB downloads. Just works.</p>
+      </article>
+      <article class="feature">
+        <span class="feature-icon">👀</span>
+        <h3>WATCH MODE</h3>
+        <p>Auto-recompile on save. Images, .bib, .sty — all watched.</p>
+      </article>
+      <article class="feature">
+        <span class="feature-icon">🔒</span>
+        <h3>EPHEMERAL</h3>
+        <p>Stateless processing. Files never stored. Privacy first.</p>
+      </article>
+    </section>
+
+    <!-- How it works -->
+    <section class="how">
+      <h2>HOW IT WORKS</h2>
+      <ol class="steps">
+        <li><span>1</span> Scan local files</li>
+        <li><span>2</span> Validate syntax</li>
+        <li><span>3</span> Cloud compile</li>
+        <li><span>4</span> Get your PDF</li>
+      </ol>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <a href="https://github.com/srsergiolazaro/qtex" class="btn" target="_blank">GITHUB →</a>
+      <a href="https://www.npmjs.com/package/qtex" class="btn btn-alt" target="_blank">NPM →</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Built by <strong>Tachyon-Tex</strong></p>
+      <div class="footer-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
