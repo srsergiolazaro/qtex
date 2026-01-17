@@ -94,6 +94,11 @@ export async function selfUpdate(currentVersion) {
         const latestVersion = data.tag_name.replace('v', '');
 
         if (!isNewer(latestVersion, currentVersion)) {
+            if (isNewer(currentVersion, latestVersion)) {
+                ui.warn(`You are using a version (${colors.bold}v${currentVersion}${colors.reset}) that is ahead of the latest release (${colors.bold}v${latestVersion}${colors.reset}).`);
+                return;
+            }
+
             ui.success(`qtex is already up to date (${colors.bold}v${currentVersion}${colors.reset}).`);
             return;
         }
