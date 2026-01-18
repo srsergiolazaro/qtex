@@ -5,15 +5,17 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'docs/**'
-      - '.github/workflows/deploy-pages.yml'
-      - 'README.md'
-      - 'LICENSE'
-      - '.gitignore'
+      - "docs/**"
+      - ".github/workflows/deploy-pages.yml"
+      - "README.md"
+      - "LICENSE"
+      - ".gitignore"
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,8 +24,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Install dependencies
         run: npm ci
@@ -34,15 +40,32 @@ jobs:
           # Config git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
+
           # Ensure lockfile changes from ci/install are discarded to avoid "directory not clean" error
           git checkout package-lock.json
-          
+
           # Bump version (patch)
           npm version patch -m "chore: bump version to %s [skip ci]"
-          
+
           # Push the version commit and tag back to GitHub
           git push origin main --tags
+
+          # Get the new tag
+          NEW_TAG=$(git describe --tags --abbrev=0)
+          echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Build Bundle
+        run: |
+          npm run build
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version-bump.outputs.tag }}
+          files: dist/qtex.js
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
         run: npm publish

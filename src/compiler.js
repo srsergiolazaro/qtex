@@ -15,9 +15,10 @@ async function getFiles(dir, baseDir = dir) {
                 files.push(...(await getFiles(res, baseDir)));
             }
         } else {
+            const rel = join(dir.replace(baseDir, ''), entry.name).replace(/^[\\\/]/, '').replace(/\\/g, '/');
             files.push({
                 path: res,
-                relative: join(dir.replace(baseDir, ''), entry.name).replace(/^[\\\/]/, '')
+                relative: rel
             });
         }
     }
@@ -33,9 +34,19 @@ export async function compile(dir, options) {
         const absoluteDir = resolve(dir);
         const allFiles = await getFiles(absoluteDir);
 
+        // Sort files to prioritize .tex files (upladed first)
+        allFiles.sort((a, b) => {
+            const extA = extname(a.path).toLowerCase();
+            const extB = extname(b.path).toLowerCase();
+            if (extA === '.tex' && extB !== '.tex') return -1;
+            if (extA !== '.tex' && extB === '.tex') return 1;
+            return a.relative.localeCompare(b.relative);
+        });
+
         const form = new FormData();
         const validateForm = new FormData();
         let hasLatex = false;
+        let sentFilesCount = 0;
 
         for (const fileObj of allFiles) {
             const ext = extname(fileObj.path).toLowerCase();
@@ -48,6 +59,7 @@ export async function compile(dir, options) {
                 const content = await readFile(fileObj.path);
                 const blob = new Blob([content]);
                 form.append('files', blob, fileObj.relative);
+                sentFilesCount++;
 
                 if (ext === '.tex') {
                     validateForm.append('files', blob, fileObj.relative);
@@ -100,7 +112,7 @@ export async function compile(dir, options) {
         if (response.ok) {
             const buffer = await response.arrayBuffer();
             const compileTime = response.headers.get('x-compile-time-ms') || 'unknown';
-            const filesReceived = response.headers.get('x-files-received') || '0';
+            const filesReceived = response.headers.get('x-files-received') || sentFilesCount;
 
             const outputPath = resolve(process.cwd(), dir, outputFileName);
             await writeFile(outputPath, Buffer.from(buffer));

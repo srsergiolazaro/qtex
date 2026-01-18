@@ -27,6 +27,20 @@ async function saveState(state) {
 }
 
 /**
+ * Simple semver comparison (v1.2.3 format)
+ * Returns true if latest > current
+ */
+function isNewer(latest, current) {
+    const l = latest.split('.').map(Number);
+    const c = current.split('.').map(Number);
+    for (let i = 0; i < 3; i++) {
+        if (l[i] > c[i]) return true;
+        if (l[i] < c[i]) return false;
+    }
+    return false;
+}
+
+/**
  * Checks for updates in the background and launches a detached 
  * background process to update the binary if a new version is found.
  */
@@ -47,13 +61,20 @@ export async function autoUpdate(currentVersion) {
 
         await saveState({ ...state, lastCheck: now });
 
-        if (latestVersion !== currentVersion) {
+        if (isNewer(latestVersion, currentVersion)) {
             console.log(`${colors.dim}\n🚀 New version detected (${data.tag_name}). Updating silently in background...${colors.reset}`);
 
-            // Re-run installer silently in a detached background process
-            const installScript = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
+            // Platform-aware install command
+            let installCmd, shell;
+            if (process.platform === 'win32') {
+                installCmd = 'irm https://raw.githubusercontent.com/' + REPO + '/main/install.ps1 | iex';
+                shell = 'powershell';
+            } else {
+                installCmd = 'curl -fsSL https://raw.githubusercontent.com/' + REPO + '/main/install.sh | bash';
+                shell = 'bash';
+            }
 
-            spawn('bash', ['-c', `${installScript} > /dev/null 2>&1`], {
+            spawn(shell, ['-c', installCmd], {
                 detached: true,
                 stdio: 'ignore'
             }).unref();
@@ -72,15 +93,29 @@ export async function selfUpdate(currentVersion) {
         const data = await res.json();
         const latestVersion = data.tag_name.replace('v', '');
 
-        if (latestVersion === currentVersion) {
+        if (!isNewer(latestVersion, currentVersion)) {
+            if (isNewer(currentVersion, latestVersion)) {
+                ui.warn(`You are using a version (${colors.bold}v${currentVersion}${colors.reset}) that is ahead of the latest release (${colors.bold}v${latestVersion}${colors.reset}).`);
+                return;
+            }
             ui.success(`qtex is already up to date (${colors.bold}v${currentVersion}${colors.reset}).`);
             return;
         }
 
-        ui.info(`New version found: ${colors.bold}v${latestVersion}${colors.reset}. Updating...`);
-        const installScriptCmd = `curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash`;
-        execSync(installScriptCmd, { stdio: 'inherit' });
-        ui.success('qtex has been updated successfully!');
+        ui.info(`New version found: ${colors.bold}v${latestVersion}${colors.reset}. Updating cartbridge...`);
+
+        // location of the current running script (qtex.js)
+        const currentScriptPath = process.argv[1];
+
+        // Download new bundle
+        const bundleUrl = `https://github.com/${REPO}/releases/latest/download/qtex.js`;
+        const bundleRes = await fetch(bundleUrl);
+        if (!bundleRes.ok) throw new Error('Failed to download update bundle');
+
+        const newCode = await bundleRes.text();
+        await writeFile(currentScriptPath, newCode);
+
+        ui.success(`qtex updated to v${latestVersion}! (Size: ${(newCode.length / 1024).toFixed(2)} KB)`);
     } catch (error) {
         ui.error(`Update failed: ${error.message}`);
     }
