@@ -15,9 +15,10 @@ async function getFiles(dir, baseDir = dir) {
                 files.push(...(await getFiles(res, baseDir)));
             }
         } else {
+            const rel = join(dir.replace(baseDir, ''), entry.name).replace(/^[\\\/]/, '').replace(/\\/g, '/');
             files.push({
                 path: res,
-                relative: join(dir.replace(baseDir, ''), entry.name).replace(/^[\\\/]/, '').replace(/\\/g, '/')
+                relative: rel
             });
         }
     }
@@ -31,6 +32,15 @@ export async function compile(dir, options) {
     try {
         const absoluteDir = resolve(dir);
         const allFiles = await getFiles(absoluteDir);
+
+        // Sort files to prioritize .tex files (upladed first)
+        allFiles.sort((a, b) => {
+            const extA = extname(a.path).toLowerCase();
+            const extB = extname(b.path).toLowerCase();
+            if (extA === '.tex' && extB !== '.tex') return -1;
+            if (extA !== '.tex' && extB === '.tex') return 1;
+            return a.relative.localeCompare(b.relative);
+        });
 
         const form = new FormData();
         const validateForm = new FormData();
