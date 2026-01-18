@@ -17,7 +17,7 @@ async function getFiles(dir, baseDir = dir) {
         } else {
             files.push({
                 path: res,
-                relative: join(dir.replace(baseDir, ''), entry.name).replace(/^[\\\/]/, '')
+                relative: join(dir.replace(baseDir, ''), entry.name).replace(/^[\\\/]/, '').replace(/\\/g, '/')
             });
         }
     }
