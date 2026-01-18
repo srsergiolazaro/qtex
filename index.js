@@ -66,24 +66,21 @@ ${colors.bold}OPTIONS:${colors.reset}
         autoUpdate(packageJson.version);
 
         if (values.watch) {
-            const { TachyonWS } = await import('./src/ws-client.js');
-            const wsClient = new TachyonWS(directory, values);
-            await wsClient.connect();
-
-            const server = startServer();
+            const server = await startServer(4343);
             const viewUrl = `http://localhost:${server.port}/view`;
             ui.info(`Watching for changes in: ${colors.bold}${directory}${colors.reset}`);
             ui.info(`View PDF at: ${colors.blue}${colors.underline}${viewUrl}${colors.reset}`);
 
-            // Initial compile over WS
-            await wsClient.sendProject();
+            // Initial compile
+            await compile(directory, values);
 
             // Auto-open browser
             const openCmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start ""' : 'xdg-open';
             exec(`${openCmd} "${viewUrl}"`);
 
+            let isCompiling = false;
             watch(directory, { recursive: true }, async (event, filename) => {
-                if (filename && !filename.startsWith('.') && !wsClient.isCompiling) {
+                if (filename && !filename.startsWith('.') && !isCompiling) {
                     const ext = extname(filename).toLowerCase();
                     const outputFileName = values.output || 'output.pdf';
 
@@ -92,7 +89,14 @@ ${colors.bold}OPTIONS:${colors.reset}
                     const isOutputFile = basename(filename) === basename(outputFileName);
 
                     if (watchExts.includes(ext) && !isOutputFile) {
-                        await wsClient.sendProject();
+                        isCompiling = true;
+                        try {
+                            await compile(directory, values);
+                        } catch (e) {
+                            ui.error(`Watch compile error: ${e.message}`);
+                        } finally {
+                            isCompiling = false;
+                        }
                     }
                 }
             });
