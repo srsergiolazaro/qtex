@@ -20,7 +20,25 @@ RESET='\033[0m'
 
 echo -e "${MAGENTA}${BOLD}🌀 qtex Installer (Hybrid Architecture)${RESET}\n"
 
-# 1. Create directories
+# 1. Environment Verification & Deep Clean
+if [ -d "$INSTALL_DIR" ]; then
+    IS_LEGACY=false
+    if [ -f "$BIN_DIR/qtex.exe" ] || [ -f "$BIN_DIR/qtex-bin" ]; then IS_LEGACY=true; fi
+    
+    IS_BROKEN=false
+    if [ -f "$SHIM_PATH" ]; then
+        if ! "$SHIM_PATH" --version >/dev/null 2>&1; then IS_BROKEN=true; fi
+    else
+        # If folder exists but no shim and no legacy bin, it's broken
+        if [ "$IS_LEGACY" = "false" ]; then IS_BROKEN=true; fi
+    fi
+
+    if [ "$IS_LEGACY" = "true" ] || [ "$IS_BROKEN" = "true" ]; then
+        echo -e "${MAGENTA}⚠️  Very old or broken version detected. Performing deep clean...${RESET}"
+        rm -rf "$INSTALL_DIR"
+    fi
+fi
+
 mkdir -p "$RUNTIME_DIR"
 mkdir -p "$BIN_DIR"
 
@@ -66,7 +84,17 @@ fi
 
 # 3. Download qtex bundle (The "Cartridge")
 echo -e "${BLUE}📦 Downloading latest qtex bundle...${RESET}"
-curl -fsSL "https://github.com/$REPO/releases/latest/download/qtex.js" -o "$QTEX_JS"
+if ! curl -fsSL "https://github.com/$REPO/releases/latest/download/qtex.js" -o "$QTEX_JS"; then
+    if [ -d "$INSTALL_DIR" ]; then
+        echo -e "${MAGENTA}⚠️  Update failed. Wiping root directory to resolve conflicts...${RESET}"
+        rm -rf "$INSTALL_DIR"
+        echo -e "${BLUE}✨ Root cleaned. Please re-run the install command to complete fresh installation.${RESET}"
+        echo -e "   curl -fsSL https://srsergiolazaro.github.io/qtex/install.sh | bash"
+        exit 1
+    fi
+    echo -e "${MAGENTA}❌ Failed to download qtex.js from latest release.${RESET}"
+    exit 1
+fi
 
 # 4. Create Shim (The "Key")
 echo -e "${BLUE}🔌 Creating entry point...${RESET}"

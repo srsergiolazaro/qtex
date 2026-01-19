@@ -8,10 +8,29 @@ $Repo = "srsergiolazaro/qtex"
 
 Write-Host "🌀 qtex Installer (Hybrid Architecture)" -ForegroundColor Magenta
 
-# 2. Creating directories & Cleaning old binaries
+# 2. Environment Verification & Deep Clean
+if (Test-Path $InstallDir) {
+    $IsLegacy = Test-Path (Join-Path $BinDir "qtex.exe")
+    $IsBroken = $false
+    
+    if (Test-Path $ShimPath) {
+        try {
+            $v = & $ShimPath --version 2>$null
+            if ($v -notmatch "qtex v") { $IsBroken = $true }
+        } catch { $IsBroken = $true }
+    } else {
+        # If folder exists but no shim and no legacy exe, it's broken
+        if (-not $IsLegacy) { $IsBroken = $true }
+    }
+    
+    if ($IsLegacy -or $IsBroken) {
+        Write-Host "🧹 Very old or broken version detected. Performing deep clean..." -ForegroundColor Yellow
+        Remove-Item $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
 if (-not (Test-Path $RuntimeDir)) { New-Item -ItemType Directory -Path $RuntimeDir -Force | Out-Null }
 if (-not (Test-Path $BinDir)) { New-Item -ItemType Directory -Path $BinDir -Force | Out-Null }
-if (Test-Path "$BinDir\qtex.exe") { Remove-Item "$BinDir\qtex.exe" -Force -ErrorAction SilentlyContinue }
 
 # 3. Download/Install Bun Engine (The "Motor")
 $BunPath = Join-Path $RuntimeDir "bun.exe"
@@ -52,6 +71,14 @@ try {
     $Url = "https://github.com/$Repo/releases/latest/download/qtex.js"
     Invoke-WebRequest -Uri $Url -OutFile $QtexJs -ErrorAction Stop
 } catch {
+     if (Test-Path $InstallDir) {
+        Write-Host "⚠️  Update failed. This might be due to a version conflict." -ForegroundColor Red
+        Write-Host "🔥 Performing emergency deep clean..." -ForegroundColor Red
+        Remove-Item $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Host "✨ Root cleaned. Please re-run the install command to complete fresh installation." -ForegroundColor Cyan
+        Write-Host "   irm https://srsergiolazaro.github.io/qtex/install.ps1 | iex" -ForegroundColor White
+        return
+     }
      Write-Host "❌ Failed to download qtex.js from latest release." -ForegroundColor Red
      return
 }
