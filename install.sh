@@ -5,10 +5,8 @@ set -e
 
 # --- Configuration ---
 INSTALL_DIR="$HOME/.qtex"
-RUNTIME_DIR="$INSTALL_DIR/runtime"
 BIN_DIR="$INSTALL_DIR/bin"
-QTEX_JS="$INSTALL_DIR/qtex.js"
-SHIM_PATH="$BIN_DIR/qtex"
+BINARY_NAME="qtex"
 REPO="srsergiolazaro/qtex"
 
 # --- Colors ---
@@ -18,93 +16,50 @@ GREEN='\033[0;32m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-echo -e "${MAGENTA}${BOLD}🌀 qtex Installer (Hybrid Architecture)${RESET}\n"
+echo -e "${MAGENTA}${BOLD}🌀 qtex Installer${RESET}\n"
 
-# 1. Environment Verification & Deep Clean
-if [ -d "$INSTALL_DIR" ]; then
-    IS_LEGACY=false
-    if [ -f "$BIN_DIR/qtex.exe" ] || [ -f "$BIN_DIR/qtex-bin" ]; then IS_LEGACY=true; fi
-    
-    IS_BROKEN=false
-    if [ -f "$SHIM_PATH" ]; then
-        if ! "$SHIM_PATH" --version >/dev/null 2>&1; then IS_BROKEN=true; fi
-    else
-        # If folder exists but no shim and no legacy bin, it's broken
-        if [ "$IS_LEGACY" = "false" ]; then IS_BROKEN=true; fi
-    fi
+# 1. Detect OS and Architecture
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m)"
 
-    if [ "$IS_LEGACY" = "true" ] || [ "$IS_BROKEN" = "true" ]; then
-        echo -e "${MAGENTA}⚠️  Very old or broken version detected. Performing deep clean...${RESET}"
-        rm -rf "$INSTALL_DIR"
-    fi
+case "$OS" in
+    darwin)
+        if [ "$ARCH" = "arm64" ]; then
+            ASSET_NAME="qtex-darwin-arm64"
+        else
+            ASSET_NAME="qtex-darwin-x64"
+        fi
+        ;;
+    linux)
+        ASSET_NAME="qtex-linux-x64"
+        ;;
+    *)
+        echo -e "❌ Unsupported OS: $OS. Please install manually or use Windows installer."
+        exit 1
+        ;;
+esac
+
+# 2. Preparation & Clean Up
+# Resolve conflict with old hybrid installation
+if [ -d "$INSTALL_DIR/runtime" ]; then
+    echo -e "${MAGENTA}⚠️  Detected old hybrid installation. Cleaning up...${RESET}"
+    rm -rf "$INSTALL_DIR"
 fi
 
-mkdir -p "$RUNTIME_DIR"
 mkdir -p "$BIN_DIR"
 
-# 2. Install Bun (The "Motor")
-BUN_BIN="$RUNTIME_DIR/bun"
+# 3. Download standalone binary from GitHub
+echo -e "${BLUE}🚚 Downloading $ASSET_NAME (Standalone binary)...${RESET}"
+URL="https://github.com/$REPO/releases/latest/download/$ASSET_NAME"
 
-# Check if existing Bun is broken
-if [ -f "$BUN_BIN" ]; then
-    if ! "$BUN_BIN" --version >/dev/null 2>&1; then
-        echo -e "${MAGENTA}⚠️  Existing Bun runtime is broken or incompatible. Reinstalling...${RESET}"
-        rm -f "$BUN_BIN"
-    fi
-fi
-
-if [ ! -f "$BUN_BIN" ]; then
-    echo -e "${BLUE}⚙️  Installing Bun Runtime (First time only)...${RESET}"
-    
-    # Detect OS/Arch
-    OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
-    ARCH="$(uname -m)"
-    
-    if [ "$OS" = "darwin" ]; then
-        if [ "$ARCH" = "arm64" ]; then TARGET="bun-darwin-aarch64"; else TARGET="bun-darwin-x64"; fi
-    else
-        TARGET="bun-linux-x64"
-    fi
-
-    # Disable pushd/popd output
-    pushd "$RUNTIME_DIR" > /dev/null
-    
-    # Download and extract Bun
-    curl -fsSL "https://github.com/oven-sh/bun/releases/latest/download/$TARGET.zip" -o bun.zip
-    unzip -q bun.zip
-    mv "$TARGET/bun" ./bun
-    chmod +x ./bun
-    
-    # Cleanup
-    rm bun.zip
-    rm -rf "$TARGET"
-    
-    popd > /dev/null
-fi
-
-# 3. Download qtex bundle (The "Cartridge")
-echo -e "${BLUE}📦 Downloading latest qtex bundle...${RESET}"
-if ! curl -fsSL "https://github.com/$REPO/releases/latest/download/qtex.js" -o "$QTEX_JS"; then
-    if [ -d "$INSTALL_DIR" ]; then
-        echo -e "${MAGENTA}⚠️  Update failed. Wiping root directory to resolve conflicts...${RESET}"
-        rm -rf "$INSTALL_DIR"
-        echo -e "${BLUE}✨ Root cleaned. Please re-run the install command to complete fresh installation.${RESET}"
-        echo -e "   curl -fsSL https://srsergiolazaro.github.io/qtex/install.sh | bash"
-        exit 1
-    fi
-    echo -e "${MAGENTA}❌ Failed to download qtex.js from latest release.${RESET}"
+if ! curl -sSL -o "$BIN_DIR/$BINARY_NAME" "$URL"; then
+    echo -e "❌ Download failed from GitHub. Please check your connection."
     exit 1
 fi
 
-# 4. Create Shim (The "Key")
-echo -e "${BLUE}🔌 Creating entry point...${RESET}"
-cat <<EOF > "$SHIM_PATH"
-#!/bin/bash
-exec "$BUN_BIN" run "$QTEX_JS" "\$@"
-EOF
-chmod +x "$SHIM_PATH"
+chmod +x "$BIN_DIR/$BINARY_NAME"
 
-# 5. Add to PATH
+# 4. Add to PATH
 SHELL_CONFIG=""
 case $SHELL in
     */zsh) SHELL_CONFIG="$HOME/.zshrc" ;;
@@ -127,5 +82,6 @@ if [ -n "$SHELL_CONFIG" ]; then
     fi
 fi
 
-echo -e "\n${GREEN}${BOLD}✨ qtex installed! Update size reduced by 1000x.${RESET}"
-echo -e "Please run ${BOLD}source $SHELL_CONFIG${RESET} to start using qtex."
+echo -e "\n${GREEN}${BOLD}✨ qtex installed successfully!${RESET}"
+echo -e "Please run ${BOLD}source $SHELL_CONFIG${RESET} to start using 'qtex'."
+echo -e "Usage example: ${BLUE}qtex ./example --watch${RESET}"
