@@ -44,7 +44,7 @@ function isNewer(latest, current) {
  * Checks for updates in the background and launches a detached 
  * background process to update the binary if a new version is found.
  */
-export async function autoUpdate(currentVersion) {
+export async function autoUpdate(currentVersion, silent = false) {
     const state = await getState();
     const now = Date.now();
     const ONE_DAY = 24 * 60 * 60 * 1000;
@@ -62,7 +62,9 @@ export async function autoUpdate(currentVersion) {
         await saveState({ ...state, lastCheck: now });
 
         if (isNewer(latestVersion, currentVersion)) {
-            console.log(`${colors.dim}\n🚀 New version detected (${data.tag_name}). Updating silently in background...${colors.reset}`);
+            if (!silent) {
+                console.log(`${colors.dim}\n🚀 New version detected (${data.tag_name}). Updating silently in background...${colors.reset}`);
+            }
 
             // Platform-aware install command
             let installCmd, shell;

@@ -20,7 +20,8 @@ const optionsSchema = {
     help: { type: 'boolean', short: 'h' },
     update: { type: 'boolean', short: 'u' },
     version: { type: 'boolean', short: 'v' },
-    verify: { type: 'boolean' }
+    verify: { type: 'boolean' },
+    json: { type: 'boolean' }
 };
 
 async function main() {
@@ -47,6 +48,7 @@ ${colors.bold}OPTIONS:${colors.reset}
   -u, --update          Update to the latest version
   -v, --version         Show version information
   --verify              Only verify LaTeX without compiling
+  --json                Output result in JSON format
   -h, --help            Show this help message
             `);
             process.exit(0);
@@ -58,14 +60,17 @@ ${colors.bold}OPTIONS:${colors.reset}
         }
 
         const directory = positionals[0] || '.';
-        console.log(`${colors.magenta}${colors.bold}\n🌀 qtex CLI v${packageJson.version} (Vanilla)${colors.reset}\n`);
 
-        if (values.server) {
+        if (!values.json) {
+            console.log(`${colors.magenta}${colors.bold}\n🌀 qtex CLI v${packageJson.version} (Vanilla)${colors.reset}\n`);
+        }
+
+        if (values.server && !values.json) {
             ui.info(`Using compilation server: ${colors.bold}${values.server}${colors.reset}`);
         }
 
         // Check for updates in the background
-        autoUpdate(packageJson.version);
+        autoUpdate(packageJson.version, values.json);
 
         if (values.watch) {
             const server = await startServer(4343);
@@ -105,15 +110,25 @@ ${colors.bold}OPTIONS:${colors.reset}
         } else {
             await compile(directory, values);
 
-            // Auto-open generated PDF in the system browser
-            const outputFileName = values.output || 'output.pdf';
-            const outputPath = resolve(process.cwd(), directory, outputFileName);
-            const openCmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start ""' : 'xdg-open';
-            exec(`${openCmd} "${outputPath}"`);
+            if (!values.verify && !values.json) {
+                // Auto-open generated PDF in the system browser
+                const outputFileName = values.output || 'output.pdf';
+                const outputPath = resolve(process.cwd(), directory, outputFileName);
+                const openCmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start ""' : 'xdg-open';
+                exec(`${openCmd} "${outputPath}"`);
+            }
+
+            if (values.json) {
+                console.log(JSON.stringify({ success: true }));
+            }
         }
 
     } catch (e) {
-        ui.error(e.message);
+        if (args.includes('--json')) {
+            console.log(JSON.stringify({ success: false, error: e.message }));
+        } else {
+            ui.error(e.message);
+        }
         process.exit(1);
     }
 }

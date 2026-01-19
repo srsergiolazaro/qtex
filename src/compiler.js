@@ -28,7 +28,8 @@ async function getFiles(dir, baseDir = dir) {
 export async function compile(dir, options) {
     const outputFileName = options.output || 'output.pdf';
     const serverUrl = options.server || API_BASE;
-    const spinner = new Spinner(`${colors.blue}Preparing compilation...`).start();
+    const silent = options.json;
+    const spinner = silent ? { start: () => spinner, update: () => { }, succeed: () => { }, fail: () => { }, stop: () => { } } : new Spinner(`${colors.blue}Preparing compilation...`).start();
 
     try {
         const absoluteDir = resolve(dir);
@@ -90,14 +91,11 @@ export async function compile(dir, options) {
 
             if (validation.valid === false) {
                 spinner.stop();
-                ui.error('Validation failed!');
-                validation.errors.forEach(err => {
-                    console.log(`  ${colors.red}• [Line ${err.line || '?'}] ${err.message}${colors.reset}`);
-                });
-                return;
+                const errorDetails = validation.errors.map(err => `[Line ${err.line || '?'}] ${err.message}`).join('\n');
+                throw new Error(`Validation failed:\n${errorDetails}`);
             }
 
-            if (validation.warnings?.length > 0) {
+            if (validation.warnings?.length > 0 && !silent) {
                 spinner.stop();
                 ui.warn('Validation warnings:');
                 validation.warnings.forEach(warn => console.log(`  ${colors.yellow}⚡ ${warn}${colors.reset}`));
@@ -133,14 +131,14 @@ export async function compile(dir, options) {
             }
 
             spinner.succeed(`${colors.green}PDF generated in ${colors.bold}${compileTime}ms${colors.reset}`);
-            console.log(`${colors.dim}  ⚡ Files: ${filesReceived} processed${colors.reset}`);
-            console.log(`${colors.dim}  📍 Path: ${outputPath}${colors.reset}`);
+            if (!silent) {
+                console.log(`${colors.dim}  ⚡ Files: ${filesReceived} processed${colors.reset}`);
+                console.log(`${colors.dim}  📍 Path: ${outputPath}${colors.reset}`);
+            }
         } else {
             const errorMsg = await response.text();
             spinner.fail(`Compilation failed (Status ${response.status})`);
-            console.log(`\n${colors.yellow}--- Error Log ---${colors.reset}`);
-            console.log(`${colors.red}${errorMsg || 'Error details unavailable.'}${colors.reset}`);
-            console.log(`${colors.yellow}-----------------\n${colors.reset}`);
+            throw new Error(`Compilation error:\n${errorMsg}`);
         }
     } catch (error) {
         spinner.fail('An unexpected error occurred.');
