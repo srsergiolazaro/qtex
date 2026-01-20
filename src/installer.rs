@@ -142,7 +142,15 @@ pub async fn self_update() -> Result<(), Box<dyn std::error::Error>> {
         }
         #[cfg(not(unix))]
         {
+            // Windows self-replacement trick: rename current file to .old and write new file
+            let old_path = binary_path.with_extension("exe.old");
+            if binary_path.exists() {
+                // Ignore error if .old already exists or cannot be removed
+                let _ = fs::remove_file(&old_path);
+                fs::rename(&binary_path, &old_path)?;
+            }
             fs::write(&binary_path, &bytes)?;
+            let _ = fs::remove_file(&old_path); // Try to clean up, might fail if still locked
         }
 
         ui::info(&format!("Successfully updated to v{}!", latest_version));
