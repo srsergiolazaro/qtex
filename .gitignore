@@ -33,3 +33,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+
+# Added by cargo
+
+/target
+tests/*

@@ -1,22 +1,13 @@
-// Detect current site base URL (e.g., https://srsergiolazaro.github.io/qtex/)
-const getBaseUrl = () => {
-    const { origin, pathname } = window.location
-    // GitHub Pages sites usually have a pathname like /repo-name/
-    // We want to ensure we have the trailing slash if it's a directory
-    const base = pathname.endsWith('/') ? pathname : pathname.split('/').slice(0, -1).join('/') + '/'
-    return `${origin}${base}`.replace(/\/+$/, '') // Remove trailing slash for base
-}
-
-const baseUrl = getBaseUrl()
+// Raw GitHub URLs for install scripts
+const REPO_BASE = 'https://raw.githubusercontent.com/srsergiolazaro/qtex/main'
 
 export const CONFIG = {
-    baseUrl,
     githubUrl: 'https://github.com/srsergiolazaro/qtex',
-    npmUrl: 'https://www.npmjs.com/package/qtex',
+    releasesUrl: 'https://github.com/srsergiolazaro/qtex/releases/latest',
     commands: {
-        unix: `curl -fsSL ${baseUrl}/install.sh | bash`,
-        windows: `irm ${baseUrl}/install.ps1 | iex`
+        unix: `curl -fsSL ${REPO_BASE}/install.sh | bash`,
+        windows: `irm ${REPO_BASE}/install.ps1 | iex`
     },
     status: 'SYSTEMS OPERATIONAL',
-    version: 'v1.0.0-PRO'
+    version: 'RUST EDITION'
 }

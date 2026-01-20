@@ -16,7 +16,7 @@ GREEN='\033[0;32m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-echo -e "${MAGENTA}${BOLD}🌀 qtex Installer${RESET}\n"
+echo -e "${MAGENTA}${BOLD}🌀 qtex Installer (Rust Edition)${RESET}\n"
 
 # 1. Detect OS and Architecture
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -31,6 +31,7 @@ case "$OS" in
         fi
         ;;
     linux)
+        # Try musl first for better compatibility, fallback to glibc
         ASSET_NAME="qtex-linux-x64"
         ;;
     *)
@@ -48,8 +49,8 @@ fi
 
 mkdir -p "$BIN_DIR"
 
-# 3. Download standalone binary from GitHub
-echo -e "${BLUE}🚚 Downloading $ASSET_NAME (Standalone binary)...${RESET}"
+# 3. Download standalone binary from GitHub Releases
+echo -e "${BLUE}🚚 Downloading $ASSET_NAME from GitHub Releases...${RESET}"
 URL="https://github.com/$REPO/releases/latest/download/$ASSET_NAME"
 
 if ! curl -sSL -o "$BIN_DIR/$BINARY_NAME" "$URL"; then

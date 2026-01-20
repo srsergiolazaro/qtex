@@ -1,4 +1,4 @@
-name: Publish to npm
+name: Build and Release
 
 on:
   push:
@@ -11,77 +11,130 @@ on:
       - "LICENSE"
       - ".gitignore"
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  publish:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: qtex-linux-x64
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            artifact: qtex-linux-x64-musl
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: qtex-darwin-x64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: qtex-darwin-arm64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: qtex-windows-x64.exe
+
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install musl-tools (Linux musl)
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Prepare artifact (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cp target/${{ matrix.target }}/release/qtex ${{ matrix.artifact }}
+          chmod +x ${{ matrix.artifact }}
+
+      - name: Prepare artifact (Windows)
+        if: runner.os == 'Windows'
+        run: cp target/${{ matrix.target }}/release/qtex.exe ${{ matrix.artifact }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+
+  release:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
+      - name: Get version from Cargo.toml
+        id: get-version
+        run: |
+          VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Automated Version Bump
+      - name: Bump version
         id: version-bump
         run: |
-          # Config git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-
-          # Ensure lockfile changes from ci/install are discarded to avoid "directory not clean" error
-          git checkout package-lock.json
-
-          # Bump version (patch)
-          npm version patch -m "chore: bump version to %s [skip ci]"
-
-          # Push the version commit and tag back to GitHub
+          
+          # Read current version
+          CURRENT=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          
+          # Bump patch version
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+          
+          # Update Cargo.toml
+          sed -i "s/^version = \"$CURRENT\"/version = \"$NEW_VERSION\"/" Cargo.toml
+          
+          # Commit and tag
+          git add Cargo.toml
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
+          git tag "v$NEW_VERSION"
           git push origin main --tags
+          
+          echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-          # Get the new tag
-          NEW_TAG=$(git describe --tags --abbrev=0)
-          echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: releases
 
-      - name: Build Bundle and Binaries
+      - name: Prepare release files
         run: |
-          npm run build
-          mkdir -p releases
-          # macOS Intel
-          bun build ./index.js --compile --target=bun-darwin-x64 --outfile=releases/qtex-darwin-x64
-          # macOS Silicon
-          bun build ./index.js --compile --target=bun-darwin-arm64 --outfile=releases/qtex-darwin-arm64
-          # Linux x64
-          bun build ./index.js --compile --target=bun-linux-x64 --outfile=releases/qtex-linux-x64
-          # Windows x64
-          bun build ./index.js --compile --target=bun-windows-x64 --outfile=releases/qtex-windows-x64.exe
+          mkdir -p release-files
+          for dir in releases/*/; do
+            cp "$dir"* release-files/ || true
+          done
+          ls -la release-files/
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version-bump.outputs.tag }}
-          files: |
-            dist/qtex.js
-            releases/qtex-darwin-x64
-            releases/qtex-darwin-arm64
-            releases/qtex-linux-x64
-            releases/qtex-windows-x64.exe
+          name: Release ${{ steps.version-bump.outputs.version }}
+          files: release-files/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

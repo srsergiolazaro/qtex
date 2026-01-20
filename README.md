@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/qtex"><img src="https://img.shields.io/npm/v/qtex?style=flat-square&logo=npm&color=cb3837" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/qtex"><img src="https://img.shields.io/npm/dm/qtex?style=flat-square&color=blue" alt="npm downloads"></a>
+  <a href="https://github.com/srsergiolazaro/qtex/releases"><img src="https://img.shields.io/github/v/release/srsergiolazaro/qtex?style=flat-square&logo=github&color=8b5cf6" alt="GitHub Release"></a>
+  <a href="https://github.com/srsergiolazaro/qtex/releases"><img src="https://img.shields.io/github/downloads/srsergiolazaro/qtex/total?style=flat-square&color=blue" alt="Downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Fair_Source-blue?style=flat-square" alt="License"></a>
   <a href="https://latex.taptapp.xyz"><img src="https://img.shields.io/badge/engine-Tectonic-8b5cf6?style=flat-square&logo=rust" alt="Tectonic Engine"></a>
 </p>
@@ -29,23 +29,22 @@
 
 **macOS / Linux**
 ```bash
-curl -fsSL https://srsergiolazaro.github.io/qtex/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.sh | bash
 ```
 
 **Windows (PowerShell)**
 ```powershell
-irm https://srsergiolazaro.github.io/qtex/install.ps1 | iex
+irm https://raw.githubusercontent.com/srsergiolazaro/qtex/main/install.ps1 | iex
 ```
 
-**Or use directly with npx (zero install):**
-```bash
-npx qtex ./my-project
-```
+**Or download directly from [GitHub Releases](https://github.com/srsergiolazaro/qtex/releases/latest)**
 
-**Or install globally via npm:**
-```bash
-npm install -g qtex
-```
+| Platform | Binary |
+|----------|--------|
+| macOS (Apple Silicon) | `qtex-darwin-arm64` |
+| macOS (Intel) | `qtex-darwin-x64` |
+| Linux (x64) | `qtex-linux-x64` |
+| Windows (x64) | `qtex-windows-x64.exe` |
 
 ---
 
@@ -60,6 +59,9 @@ qtex ./my-thesis --watch
 
 # Custom output filename
 qtex ./my-thesis --output final.pdf
+
+# Use a custom server
+qtex ./my-thesis --server https://my-server.com
 
 # Show all options
 qtex --help

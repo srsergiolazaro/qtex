@@ -4,7 +4,7 @@ $BinDir = Join-Path $InstallDir "bin"
 $BinaryName = "qtex.exe"
 $Repo = "srsergiolazaro/qtex"
 
-Write-Host "🌀 qtex Installer" -ForegroundColor Magenta
+Write-Host "🌀 qtex Installer (Rust Edition)" -ForegroundColor Magenta
 
 # 2. Preparation & Clean Up
 # Resolve conflict with old hybrid installation
@@ -15,8 +15,8 @@ if (Test-Path (Join-Path $InstallDir "runtime")) {
 
 if (-not (Test-Path $BinDir)) { New-Item -ItemType Directory -Path $BinDir -Force | Out-Null }
 
-# 3. Download standalone binary from GitHub
-Write-Host "🚚 Downloading qtex-windows-x64 (Standalone binary)..." -ForegroundColor Blue
+# 3. Download standalone binary from GitHub Releases
+Write-Host "🚚 Downloading qtex-windows-x64.exe from GitHub Releases..." -ForegroundColor Blue
 try {
     $Url = "https://github.com/$Repo/releases/latest/download/qtex-windows-x64.exe"
     Invoke-WebRequest -Uri $Url -OutFile (Join-Path $BinDir $BinaryName) -ErrorAction Stop

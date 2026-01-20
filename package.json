@@ -4,9 +4,7 @@
   "description": "Ultra-fast cloud LaTeX compiler. Compile .tex documents in milliseconds without installing TeXLive or MikTeX. Zero config, sub-second builds, live watch mode.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bun build ./index.js --outfile=dist/qtex.js --bundle --minify --format=esm --target=bun",
-    "compile-legacy": "bun build ./index.js --compile --outfile=qtex-bin"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "latex",
