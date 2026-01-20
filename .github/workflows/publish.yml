@@ -1,10 +1,12 @@
 name: Build and Release
 
 on:
-  workflow_dispatch: # Permite ejecutarlo manualmente desde la pestaña Actions
+  workflow_dispatch:
   push:
+    branches:
+      - rust-conversion
     tags:
-      - 'v*' # Solo se ejecuta cuando subes un tag como v1.1.30
+      - 'v*'
 
 env:
   CARGO_TERM_COLOR: always
@@ -14,21 +16,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            artifact: qtex-linux-x64
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            artifact: qtex-linux-x64-musl
           - os: macos-latest
             target: x86_64-apple-darwin
             artifact: qtex-darwin-x64
           - os: macos-latest
             target: aarch64-apple-darwin
             artifact: qtex-darwin-arm64
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            artifact: qtex-windows-x64.exe
 
     runs-on: ${{ matrix.os }}
     permissions:
