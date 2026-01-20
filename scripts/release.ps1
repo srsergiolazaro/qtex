@@ -7,10 +7,27 @@ param (
 
 $ErrorActionPreference = "Stop"
 
-# 1. Detect and Bump Version
+# 1. Detect and Bump Version (Smart Detection)
 $CargoFile = "Cargo.toml"
-$CurrentVersion = (Get-Content $CargoFile | Select-String "^version = ""(.*)""" | ForEach-Object { $_.Matches.Groups[1].Value })
-$VArray = $CurrentVersion.Split(".")
+$CargoVersion = (Get-Content $CargoFile | Select-String "^version = ""(.*)""" | ForEach-Object { $_.Matches.Groups[1].Value })
+Write-Host "ℹ️  Local version in Cargo.toml: $CargoVersion" -ForegroundColor Gray
+
+# Get Latest Tag from GitHub
+Write-Host "🔍 Checking latest version on GitHub..." -ForegroundColor Gray
+$LatestTag = git tag -l "v*" --sort=-v:refname | Select-Object -First 1
+if ($null -ne $LatestTag) {
+    $LatestVersion = $LatestTag.TrimStart("v")
+    Write-Host "ℹ️  Latest tag on GitHub: $LatestTag" -ForegroundColor Gray
+    
+    # Compare and pick the highest
+    $BaseVersion = if ([System.Version]$CargoVersion -gt [System.Version]$LatestVersion) { $CargoVersion } else { $LatestVersion }
+} else {
+    $BaseVersion = $CargoVersion
+}
+
+Write-Host "🎯 Base version for increment: $BaseVersion" -ForegroundColor Cyan
+
+$VArray = $BaseVersion.Split(".")
 [int]$Major = $VArray[0]; [int]$Minor = $VArray[1]; [int]$Patch = $VArray[2]
 
 if ($Bump -eq "major") { $Major++; $Minor = 0; $Patch = 0 }
